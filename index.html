@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Maze Duel X</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --cyan:#00e5ff;
+    --purple:#8b5cf6;
+    --pink:#ff0077;
+    --green:#00ff88;
+}
+
+body{
+    font-family:'Orbitron',sans-serif;
+    overflow:hidden;
+    color:white;
+    min-height:100vh;
+
+    background:
+    radial-gradient(circle at top left,#16213e 0%,transparent 30%),
+    radial-gradient(circle at bottom right,#2e1065 0%,transparent 35%),
+    linear-gradient(135deg,#050816,#0f172a,#020617);
+}
+
+/* GRID */
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+
+    background-size:40px 40px;
+
+    animation:gridMove 15s linear infinite;
+
+    z-index:-1;
+}
+
+@keyframes gridMove{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(40px);
+    }
+}
+
+.hidden{
+    display:none !important;
+}
+
+/* MENU */
+
+#menu{
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    gap:25px;
+    padding:20px;
+}
+
+#menu h1{
+    font-size:clamp(40px,7vw,90px);
+    text-align:center;
+
+    color:var(--cyan);
+
+    text-shadow:
+    0 0 10px var(--cyan),
+    0 0 40px var(--cyan),
+    0 0 100px var(--purple);
+
+    animation:titleGlow 2s infinite alternate;
+}
+
+@keyframes titleGlow{
+    from{
+        transform:scale(1);
+    }
+
+    to{
+        transform:scale(1.04);
+    }
+}
+
+.menuButtons{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+    transition:.3s;
+    font-family:'Orbitron',sans-serif;
+}
+
+.menuBtn{
+    width:min(320px,90vw);
+
+    padding:20px;
+
+    border-radius:20px;
+
+    color:white;
+
+    font-size:20px;
+    font-weight:700;
+
+    background:
+    linear-gradient(135deg,var(--cyan),var(--purple));
+
+    box-shadow:
+    0 0 20px rgba(0,229,255,.4);
+
+    position:relative;
+    overflow:hidden;
+}
+
+.menuBtn::before{
+    content:"";
+
+    position:absolute;
+    top:0;
+    left:-100%;
+
+    width:100%;
+    height:100%;
+
+    background:
+    linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.3),
+    transparent
+    );
+
+    transition:.5s;
+}
+
+.menuBtn:hover::before{
+    left:100%;
+}
+
+.menuBtn:hover{
+    transform:translateY(-6px) scale(1.05);
+
+    box-shadow:
+    0 0 30px var(--cyan),
+    0 0 60px var(--purple);
+}
+
+/* GAME */
+
+#gameArea{
+    width:100%;
+    min-height:100vh;
+
+    padding:20px;
+}
+
+.topbar{
+    width:100%;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:20px;
+
+    padding:20px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.05);
+
+    backdrop-filter:blur(12px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    margin-bottom:20px;
+
+    box-shadow:
+    0 0 30px rgba(0,229,255,.08);
+}
+
+.statBox{
+    text-align:center;
+    flex:1;
+    min-width:120px;
+}
+
+.statTitle{
+    font-size:13px;
+    opacity:.7;
+}
+
+.statValue{
+    font-size:clamp(20px,2vw,28px);
+    font-weight:700;
+}
+
+/* BOARDS */
+/* =========================
+BOARDS FIX
+========================= */
+
+.boards{
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:repeat(2,minmax(420px,500px));
+
+    justify-content:center;
+    align-items:start;
+
+    gap:30px;
+
+    margin-top:20px;
+}
+
+/* BOARD */
+
+.boardBox{
+    width:100%;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    background:rgba(255,255,255,.05);
+
+    backdrop-filter:blur(14px);
+
+    padding:20px;
+
+    border-radius:30px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+    0 0 40px rgba(0,229,255,.08);
+
+    transition:.3s;
+}
+
+.boardBox:hover{
+    transform:translateY(-5px);
+}
+
+.boardBox h2{
+    text-align:center;
+
+    margin-bottom:15px;
+
+    color:var(--cyan);
+
+    font-size:26px;
+}
+
+/* CANVAS */
+
+canvas{
+    width:100%;
+    height:auto;
+
+    aspect-ratio:1/1;
+
+    max-width:500px;
+    max-height:500px;
+
+    border-radius:20px;
+
+    border:3px solid rgba(0,229,255,.5);
+
+    background:#0f172a;
+
+    box-shadow:
+    0 0 30px rgba(0,229,255,.3),
+    0 0 100px rgba(139,92,246,.25);
+
+    animation:canvasGlow 2s infinite alternate;
+}
+
+/* LARGE DESKTOP */
+
+@media(max-width:1300px){
+
+    .boards{
+
+        grid-template-columns:repeat(2,minmax(320px,1fr));
+
+        gap:20px;
+    }
+
+    canvas{
+
+        max-width:430px;
+        max-height:430px;
+    }
+}
+
+/* TABLET */
+
+@media(max-width:1000px){
+
+    body{
+        overflow:auto;
+    }
+
+    #gameArea{
+        min-height:100vh;
+        height:auto;
+    }
+
+    .boards{
+
+        grid-template-columns:1fr;
+
+        width:100%;
+
+        justify-items:center;
+    }
+
+    .boardBox{
+        width:min(95vw,560px);
+    }
+
+    canvas{
+        width:100%;
+        max-width:100%;
+    }
+
+    .topbar{
+        justify-content:center;
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    #menu{
+        padding:20px;
+    }
+
+    #menu h1{
+        font-size:40px;
+        line-height:1.2;
+    }
+
+    .menuButtons{
+        width:100%;
+        flex-direction:column;
+        align-items:center;
+    }
+
+    .menuBtn{
+        width:100%;
+        font-size:18px;
+        padding:18px;
+    }
+
+    .topbar{
+
+        display:grid;
+
+        grid-template-columns:repeat(2,1fr);
+
+        gap:15px;
+
+        padding:15px;
+    }
+
+    .statBox{
+        width:100%;
+    }
+
+    .statValue{
+        font-size:20px;
+    }
+
+    .boardBox{
+        padding:14px;
+        border-radius:22px;
+    }
+
+    .boardBox h2{
+        font-size:22px;
+    }
+
+    canvas{
+        border-radius:16px;
+    }
+
+    #countdown{
+        font-size:100px;
+    }
+
+    .endBox{
+        padding:25px;
+    }
+
+    #endText{
+        font-size:34px;
+    }
+
+    .btnRow{
+        flex-direction:column;
+    }
+
+    .gameBtn{
+        width:100%;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media(max-width:450px){
+
+    .topbar{
+        grid-template-columns:1fr;
+    }
+
+    #menu h1{
+        font-size:32px;
+    }
+
+    #countdown{
+        font-size:80px;
+    }
+
+    .boardBox{
+        width:100%;
+    }
+}
+
+/* COUNTDOWN */
+
+#countdownScreen{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.78);
+
+    backdrop-filter:blur(10px);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:99999;
+}
+
+#countdown{
+    font-size:180px;
+    font-weight:800;
+
+    color:var(--cyan);
+
+    text-shadow:
+    0 0 20px var(--cyan),
+    0 0 60px var(--purple),
+    0 0 120px var(--cyan);
+
+    animation:countAnim .8s infinite alternate;
+}
+
+@keyframes countAnim{
+
+    from{
+        transform:scale(.7);
+        opacity:.5;
+    }
+
+    to{
+        transform:scale(1.1);
+        opacity:1;
+    }
+}
+
+/* END SCREEN */
+
+#endScreen{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.7);
+
+    backdrop-filter:blur(10px);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:999;
+}
+
+.endBox{
+    width:min(500px,90vw);
+
+    padding:40px;
+
+    border-radius:30px;
+
+    text-align:center;
+
+    background:
+    linear-gradient(145deg,#0f172a,#111827);
+
+    border:1px solid rgba(255,255,255,.1);
+
+    box-shadow:
+    0 0 50px rgba(0,229,255,.2);
+}
+
+#endText{
+    font-size:clamp(38px,6vw,55px);
+
+    color:var(--cyan);
+
+    margin-bottom:30px;
+
+    text-shadow:
+    0 0 20px var(--cyan);
+}
+
+.btnRow{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.gameBtn{
+    width:min(180px,80vw);
+
+    padding:16px;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(135deg,var(--purple),var(--cyan));
+
+    color:white;
+
+    font-size:18px;
+    font-weight:700;
+}
+
+.gameBtn:hover{
+    transform:scale(1.08);
+}
+
+/* PARTICLES */
+
+.particle{
+    position:absolute;
+
+    width:12px;
+    height:12px;
+
+    border-radius:50%;
+
+    pointer-events:none;
+
+    animation:particleAnim .7s linear forwards;
+}
+
+@keyframes particleAnim{
+
+    from{
+        transform:translate(0,0) scale(1);
+        opacity:1;
+    }
+
+    to{
+        transform:
+        translate(
+        calc(var(--x) * 1px),
+        calc(var(--y) * 1px)
+        )
+        scale(0);
+
+        opacity:0;
+    }
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+    body{
+        overflow:auto;
+    }
+
+    .boards{
+        flex-direction:column;
+    }
+
+    #countdown{
+        font-size:120px;
+    }
+}
+
+@media(max-width:700px){
+
+    #menu h1{
+        font-size:42px;
+    }
+
+    .menuButtons{
+        flex-direction:column;
+        width:100%;
+        align-items:center;
+    }
+
+    .menuBtn{
+        width:100%;
+    }
+
+    .topbar{
+        justify-content:center;
+    }
+
+    .statBox{
+        width:45%;
+    }
+
+    .btnRow{
+        flex-direction:column;
+        align-items:center;
+    }
+
+    .gameBtn{
+        width:100%;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MENU -->
+
+<div id="menu">
+
+    <h1>CYBER MAZE DUEL X</h1>
+
+    <div class="menuButtons">
+
+        <button class="menuBtn" id="botBtn">
+            🤖 BOT MODE
+        </button>
+
+        <button class="menuBtn" id="friendBtn">
+            👥 FRIEND MODE
+        </button>
+
+    </div>
+
+</div>
+
+<!-- GAME -->
+
+<div id="gameArea" class="hidden">
+
+    <div class="topbar">
+
+        <div class="statBox">
+            <div class="statTitle">TIME</div>
+            <div class="statValue">
+                ⏳ <span id="timer">60</span>
+            </div>
+        </div>
+
+        <div class="statBox">
+            <div class="statTitle">PLAYER 1</div>
+            <div class="statValue">
+                🔵 <span id="p1Score">0</span>
+            </div>
+        </div>
+
+        <div class="statBox">
+            <div class="statTitle">PLAYER 2</div>
+            <div class="statValue">
+                🔴 <span id="p2Score">0</span>
+            </div>
+        </div>
+
+        <div class="statBox">
+            <div class="statTitle">WINNER</div>
+            <div class="statValue">
+                🏆 <span id="winner">NONE</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="boards">
+
+        <div class="boardBox">
+
+            <h2>PLAYER 1</h2>
+
+            <canvas id="maze1" width="500" height="500"></canvas>
+
+        </div>
+
+        <div class="boardBox">
+
+            <h2 id="enemyTitle">BOT</h2>
+
+            <canvas id="maze2" width="500" height="500"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- COUNTDOWN -->
+
+<div id="countdownScreen" class="hidden">
+    <div id="countdown">3</div>
+</div>
+
+<!-- END -->
+
+<div id="endScreen" class="hidden">
+
+    <div class="endBox">
+
+        <h1 id="endText">WINNER</h1>
+
+        <div class="btnRow">
+
+            <button class="gameBtn" id="restartBtn">
+                🔄 Restart
+            </button>
+
+            <button class="gameBtn" id="homeBtn">
+                🏠 Home
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const canvas1 = document.getElementById("maze1");
+const canvas2 = document.getElementById("maze2");
+
+const ctx1 = canvas1.getContext("2d");
+const ctx2 = canvas2.getContext("2d");
+
+const SIZE = 25;
+const ROWS = 20;
+const COLS = 20;
+
+let maze1 = [];
+let maze2 = [];
+
+let exit1 = {};
+let exit2 = {};
+
+let gameMode = "bot";
+
+let timer = 60;
+
+let gameInterval;
+let botInterval;
+
+let gameStarted = false;
+
+let player1Score = 0;
+let player2Score = 0;
+let mazeShiftInterval;
+const p1 = {
+    x:1,
+    y:1,
+    color:"#00e5ff"
+};
+
+const p2 = {
+    x:1,
+    y:1,
+    color:"#ff0077"
+};
+
+/* BUTTONS */
+
+document.getElementById("botBtn").onclick = () => {
+
+    gameMode = "bot";
+
+    document.getElementById("enemyTitle").innerText = "BOT";
+
+    startGame();
+};
+
+document.getElementById("friendBtn").onclick = () => {
+
+    gameMode = "friend";
+
+    document.getElementById("enemyTitle").innerText = "PLAYER 2";
+
+    startGame();
+};
+
+/* MAZE */
+
+function generateMaze(){
+
+    let maze = Array.from(
+        {length:ROWS},
+        () => Array(COLS).fill(1)
+    );
+
+    function carve(x,y){
+
+        maze[y][x] = 0;
+
+        let dirs = [
+            [0,-2],
+            [0,2],
+            [-2,0],
+            [2,0]
+        ];
+
+        dirs.sort(() => Math.random() - .5);
+
+        for(let [dx,dy] of dirs){
+
+            let nx = x + dx;
+            let ny = y + dy;
+
+            if(
+                nx > 0 &&
+                ny > 0 &&
+                nx < COLS - 1 &&
+                ny < ROWS - 1 &&
+                maze[ny][nx] === 1
+            ){
+
+                maze[y + dy/2][x + dx/2] = 0;
+
+                carve(nx,ny);
+            }
+        }
+    }
+
+    carve(1,1);
+
+    return maze;
+}
+
+function randomExit(maze){
+
+    while(true){
+
+        let x = Math.floor(Math.random() * COLS);
+        let y = Math.floor(Math.random() * ROWS);
+
+        if(
+            maze[y][x] === 0 &&
+            !(x === 1 && y === 1)
+        ){
+            return {x,y};
+        }
+    }
+}
+
+
+/* =========================
+DYNAMIC MAZE SHIFT
+========================= */
+/* =========================
+SMART DYNAMIC MAZE
+========================= */
+
+function hasPath(maze,start,end){
+
+    let queue = [];
+
+    let visited = Array.from(
+        {length:ROWS},
+        () => Array(COLS).fill(false)
+    );
+
+    queue.push(start);
+
+    visited[start.y][start.x] = true;
+
+    while(queue.length){
+
+        let current = queue.shift();
+
+        if(
+            current.x === end.x &&
+            current.y === end.y
+        ){
+            return true;
+        }
+
+        for(let [dx,dy] of [
+            [1,0],
+            [-1,0],
+            [0,1],
+            [0,-1]
+        ]){
+
+            let nx = current.x + dx;
+            let ny = current.y + dy;
+
+            if(
+                nx >= 0 &&
+                ny >= 0 &&
+                nx < COLS &&
+                ny < ROWS &&
+                !visited[ny][nx] &&
+                maze[ny][nx] === 0
+            ){
+
+                visited[ny][nx] = true;
+
+                queue.push({
+                    x:nx,
+                    y:ny
+                });
+            }
+        }
+    }
+
+    return false;
+}
+
+/* SHIFT */
+
+function shiftMaze(maze,player,exit){
+
+    /* COPY */
+
+    let newMaze =
+    maze.map(row => [...row]);
+
+    for(let y = 1; y < ROWS - 1; y++){
+
+        for(let x = 1; x < COLS - 1; x++){
+
+            /* PLAYER VA EXIT */
+
+            if(
+                (x === player.x && y === player.y) ||
+                (x === exit.x && y === exit.y)
+            ){
+                continue;
+            }
+
+            /* RANDOM CHANGE */
+
+            if(Math.random() < 0.06){
+
+                newMaze[y][x] =
+                newMaze[y][x] === 1
+                ? 0
+                : 1;
+            }
+        }
+    }
+
+    /* PLAYER BLOKLANMASIN */
+
+    newMaze[player.y][player.x] = 0;
+
+    if(newMaze[player.y - 1])
+    newMaze[player.y - 1][player.x] = 0;
+
+    if(newMaze[player.y + 1])
+    newMaze[player.y + 1][player.x] = 0;
+
+    if(newMaze[player.y][player.x - 1] !== undefined)
+    newMaze[player.y][player.x - 1] = 0;
+
+    if(newMaze[player.y][player.x + 1] !== undefined)
+    newMaze[player.y][player.x + 1] = 0;
+
+    /* EXIT OCHIQ */
+
+    newMaze[exit.y][exit.x] = 0;
+
+    /* YO'L TEKSHIRISH */
+
+    if(
+        hasPath(
+            newMaze,
+            {x:player.x,y:player.y},
+            exit
+        )
+    ){
+
+        /* AGAR YO'L BOR BO'LSA */
+
+        for(let y=0;y<ROWS;y++){
+
+            for(let x=0;x<COLS;x++){
+
+                maze[y][x] = newMaze[y][x];
+            }
+        }
+    }
+}
+/* DRAW */
+
+function drawMaze(ctx,maze){
+
+    ctx.clearRect(0,0,500,500);
+
+    for(let y=0;y<ROWS;y++){
+
+        for(let x=0;x<COLS;x++){
+
+            ctx.fillStyle =
+            maze[y][x] === 1
+            ? "#5b21b6"
+            : "#0f172a";
+
+            ctx.fillRect(
+                x * SIZE,
+                y * SIZE,
+                SIZE,
+                SIZE
+            );
+        }
+    }
+}
+
+function drawExit(ctx,exit){
+
+    ctx.fillStyle = "#00ff88";
+
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = "#00ff88";
+
+    ctx.fillRect(
+        exit.x * SIZE,
+        exit.y * SIZE,
+        SIZE,
+        SIZE
+    );
+
+    ctx.shadowBlur = 0;
+}
+
+function drawPlayer(ctx,p){
+
+    ctx.beginPath();
+
+    ctx.fillStyle = p.color;
+
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = p.color;
+
+    ctx.arc(
+        p.x * SIZE + SIZE/2,
+        p.y * SIZE + SIZE/2,
+        SIZE/3,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+}
+
+function render(){
+
+    drawMaze(ctx1,maze1);
+    drawMaze(ctx2,maze2);
+
+    drawExit(ctx1,exit1);
+    drawExit(ctx2,exit2);
+
+    drawPlayer(ctx1,p1);
+    drawPlayer(ctx2,p2);
+}
+
+/* START */
+
+function startGame(){
+
+    document
+    .getElementById("menu")
+    .classList.add("hidden");
+
+    document
+    .getElementById("gameArea")
+    .classList.remove("hidden");
+
+    document
+    .getElementById("endScreen")
+    .classList.add("hidden");
+
+    maze1 = generateMaze();
+    maze2 = generateMaze();
+
+    exit1 = randomExit(maze1);
+    exit2 = randomExit(maze2);
+
+    p1.x = 1;
+    p1.y = 1;
+
+    p2.x = 1;
+    p2.y = 1;
+
+    timer = 60;
+
+    render();
+
+    startCountdown();
+}
+
+/* COUNTDOWN */
+
+function startCountdown(){
+
+    clearInterval(gameInterval);
+    clearInterval(botInterval);
+
+    gameStarted = false;
+
+    let count = 3;
+
+    const screen =
+    document.getElementById("countdownScreen");
+
+    const text =
+    document.getElementById("countdown");
+
+    screen.classList.remove("hidden");
+
+    text.innerText = count;
+
+    let interval = setInterval(() => {
+
+        count--;
+
+        if(count > 0){
+
+            text.innerText = count;
+        }
+
+        else if(count === 0){
+
+            text.innerText = "GO!";
+        }
+
+        else{
+
+            clearInterval(interval);
+
+            screen.classList.add("hidden");
+
+            beginRealGame();
+        }
+
+    },1000);
+}
+
+function beginRealGame(){
+
+    gameStarted = true;
+
+    document
+    .getElementById("timer")
+    .innerText = timer;
+
+    gameInterval =
+    setInterval(updateTimer,1000);
+
+    if(gameMode === "bot"){
+
+        botInterval =
+        setInterval(botMove,200);
+    }
+    /* DYNAMIC MAZE */
+
+mazeShiftInterval = setInterval(() => {
+
+    shiftMaze(maze1,p1,exit1);
+
+    shiftMaze(maze2,p2,exit2);
+
+    mazeFlash();
+
+    render();
+
+},8000);
+}
+
+/* MOVE */
+
+function movePlayer(player,maze,dx,dy){
+
+    if(!gameStarted) return;
+
+    let nx = player.x + dx;
+    let ny = player.y + dy;
+
+    if(
+        maze[ny] &&
+        maze[ny][nx] === 0
+    ){
+
+        player.x = nx;
+        player.y = ny;
+
+        createParticles(player);
+
+        render();
+
+        checkWinner();
+    }
+}
+
+/* TIMER */
+
+function updateTimer(){
+
+    timer--;
+
+    document
+    .getElementById("timer")
+    .innerText = timer;
+
+    if(timer <= 0){
+
+        endGame("NO ONE");
+    }
+}
+
+/* WIN */
+
+function checkWinner(){
+
+    if(
+        p1.x === exit1.x &&
+        p1.y === exit1.y
+    ){
+
+        player1Score++;
+
+        document
+        .getElementById("p1Score")
+        .innerText = player1Score;
+
+        endGame("PLAYER 1");
+    }
+
+    if(
+        p2.x === exit2.x &&
+        p2.y === exit2.y
+    ){
+
+        player2Score++;
+
+        document
+        .getElementById("p2Score")
+        .innerText = player2Score;
+
+        endGame(
+            gameMode === "bot"
+            ? "BOT"
+            : "PLAYER 2"
+        );
+    }
+}
+
+function endGame(winner){
+    
+    gameStarted = false;
+    clearInterval(mazeShiftInterval);
+    clearInterval(gameInterval);
+    clearInterval(botInterval);
+
+    document
+    .getElementById("winner")
+    .innerText = winner;
+
+    document
+    .getElementById("endText")
+    .innerText = winner + " WINS";
+
+    document
+    .getElementById("endScreen")
+    .classList.remove("hidden");
+}
+
+/* BOT */
+
+function heuristic(a,b){
+
+    return Math.abs(a.x - b.x)
+    + Math.abs(a.y - b.y);
+}
+
+function findPath(maze,start,end){
+
+    let open = [];
+    let closed = [];
+
+    open.push({
+        x:start.x,
+        y:start.y,
+        g:0,
+        f:0,
+        parent:null
+    });
+
+    while(open.length){
+
+        open.sort((a,b)=>a.f-b.f);
+
+        let current = open.shift();
+
+        if(
+            current.x === end.x &&
+            current.y === end.y
+        ){
+
+            let path = [];
+
+            while(current){
+
+                path.push(current);
+
+                current = current.parent;
+            }
+
+            return path.reverse();
+        }
+
+        closed.push(current);
+
+        for(let [dx,dy] of [
+            [1,0],
+            [-1,0],
+            [0,1],
+            [0,-1]
+        ]){
+
+            let nx = current.x + dx;
+            let ny = current.y + dy;
+
+            if(
+                !maze[ny] ||
+                maze[ny][nx] === 1
+            ) continue;
+
+            if(
+                closed.find(
+                    n => n.x === nx && n.y === ny
+                )
+            ) continue;
+
+            let g = current.g + 1;
+
+            let h = heuristic(
+                {x:nx,y:ny},
+                end
+            );
+
+            open.push({
+                x:nx,
+                y:ny,
+                g,
+                f:g+h,
+                parent:current
+            });
+        }
+    }
+
+    return [];
+}
+
+function botMove(){
+
+    let path = findPath(
+        maze2,
+        p2,
+        exit2
+    );
+
+    if(path.length > 1){
+
+        let next = path[1];
+
+        p2.x = next.x;
+        p2.y = next.y;
+
+        createParticles(p2);
+
+        render();
+
+        checkWinner();
+    }
+}
+
+/* PARTICLES */
+
+function createParticles(player){
+
+    for(let i=0;i<12;i++){
+
+        let p = document.createElement("div");
+
+        p.className = "particle";
+
+        p.style.left =
+        player.x * SIZE + 10 + "px";
+
+        p.style.top =
+        player.y * SIZE + 10 + "px";
+
+        p.style.background = player.color;
+
+        p.style.setProperty(
+            "--x",
+            Math.random() * 100 - 50
+        );
+
+        p.style.setProperty(
+            "--y",
+            Math.random() * 100 - 50
+        );
+
+        document.body.appendChild(p);
+
+        setTimeout(() => {
+            p.remove();
+        },700);
+    }
+}
+
+/* =========================
+MAZE TRANSFORM EFFECT
+========================= */
+
+function mazeFlash(){
+
+    document.querySelectorAll("canvas")
+    .forEach(canvas => {
+
+        canvas.style.transition = ".25s";
+
+        canvas.style.filter =
+        "brightness(1.8) saturate(1.8)";
+
+        canvas.style.transform =
+        "scale(1.02)";
+
+        setTimeout(() => {
+
+            canvas.style.filter = "none";
+
+            canvas.style.transform =
+            "scale(1)";
+
+        },250);
+
+    });
+}
+/* KEYS */
+
+document.addEventListener("keydown",e => {
+
+    if(e.key === "ArrowUp")
+    movePlayer(p1,maze1,0,-1);
+
+    if(e.key === "ArrowDown")
+    movePlayer(p1,maze1,0,1);
+
+    if(e.key === "ArrowLeft")
+    movePlayer(p1,maze1,-1,0);
+
+    if(e.key === "ArrowRight")
+    movePlayer(p1,maze1,1,0);
+
+    if(gameMode === "friend"){
+
+        if(e.key === "w")
+        movePlayer(p2,maze2,0,-1);
+
+        if(e.key === "s")
+        movePlayer(p2,maze2,0,1);
+
+        if(e.key === "a")
+        movePlayer(p2,maze2,-1,0);
+
+        if(e.key === "d")
+        movePlayer(p2,maze2,1,0);
+    }
+});
+
+/* RESTART */
+
+document.getElementById("restartBtn")
+.onclick = () => {
+    clearInterval(mazeShiftInterval);
+    startGame();
+};
+
+document.getElementById("homeBtn")
+.onclick = () => {
+    clearInterval(mazeShiftInterval);
+    clearInterval(gameInterval);
+    clearInterval(botInterval);
+
+    gameStarted = false;
+
+    document
+    .getElementById("gameArea")
+    .classList.add("hidden");
+
+    document
+    .getElementById("menu")
+    .classList.remove("hidden");
+
+    document
+    .getElementById("endScreen")
+    .classList.add("hidden");
+};
+
+</script>
+</body>
+</html>
