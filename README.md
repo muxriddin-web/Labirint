@@ -44,7 +44,7 @@ Optimized JavaScript logic ensures smooth gameplay and responsive controls acros
 # 📸 Preview
 
 <div align="center">
-  <a href="https://mfs-portfoliouz.netlify.app/projects">
+  <a href="https://mfs-portfoliouz.netlify.app/portfolio1/projects">
     <img src="Screenshot_13.png" alt="Game Demo" width="600"/>
   </a>
   <p><i>Click to watch the demo on my portfolio</i></p>
