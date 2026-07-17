@@ -14,17 +14,15 @@ Challenge your friends on the same device and compete to reach the finish line f
 
 ## 🤖 Intelligent Bot
 
-Play against an intelligent AI opponent capable of navigating the maze and providing a competitive challenge.
+Play against an intelligent Bot opponent capable of navigating the maze and providing a competitive challenge.
 
 ## 📊 Live Statistics
 
 Monitor your gameplay with real-time statistics, including:
 
 - Wins
-- Losses
 - Total Matches
 - Match Duration
-- Best Time
 
 ## 🎨 Modern UI/UX
 
@@ -33,6 +31,7 @@ Enjoy a futuristic cyber-style interface featuring:
 - Smooth animations
 - Responsive layout
 - Neon visual effects
+- distracting shadow animations
 - Mobile-friendly experience
 - Clean and intuitive controls
 
@@ -44,10 +43,12 @@ Optimized JavaScript logic ensures smooth gameplay and responsive controls acros
 
 # 📸 Preview
 
-**Cyber Maze Duel X Demo**
-
-*Click to watch the demo on my portfolio.*
-
+<div align="center">
+  <a href="https://mfs-portfoliouz.netlify.app/projects">
+    <img src="photo_2026-07-15_11-01-29.jpg" alt="Checkers Game Demo" width="600"/>
+  </a>
+  <p><i>Click to watch the demo on my portfolio</i></p>
+</div>
 ---
 
 # 🛠️ Built With
@@ -56,7 +57,7 @@ Optimized JavaScript logic ensures smooth gameplay and responsive controls acros
 |------------|----------|
 | HTML5 | Structure & Semantic Layout |
 | CSS3 | Styling, Responsive Design & Animations |
-| JavaScript (ES6+) | Game Logic, AI & UI Interaction |
+| JavaScript (ES6+) | Game Logic |
 
 ---
 
@@ -65,7 +66,7 @@ Optimized JavaScript logic ensures smooth gameplay and responsive controls acros
 ## Clone the Repository
 
 ```bash
-git clone https://github.com/muxriddin-web/cyber-maze-duel-x.git
+git clone [https://github.com/muxriddin-web/Labirint]
 ```
 
 ---
@@ -73,7 +74,7 @@ git clone https://github.com/muxriddin-web/cyber-maze-duel-x.git
 ## Navigate into the Project
 
 ```bash
-cd cyber-maze-duel-x
+cd Labirint
 ```
 
 ---
@@ -99,14 +100,14 @@ No installation or server setup required.
 | Arrow Keys / WASD | Move the player |
 | Reach the Exit | Complete the maze |
 | Multiplayer | Race against a friend |
-| AI Mode | Challenge the intelligent bot |
+| Bot Mode | Challenge the intelligent bot |
 | Restart | Generate and play a new maze |
 
 ---
 
-# 🤖 AI Features
+# 🤖 Bot Features
 
-The built-in AI includes:
+The built-in Bot includes:
 
 - Intelligent pathfinding
 - Fast route calculation
@@ -114,7 +115,7 @@ The built-in AI includes:
 - Competitive gameplay
 - Smooth movement
 
-Future versions will introduce multiple AI difficulty levels.
+Future versions will introduce multiple Bot difficulty levels.
 
 ---
 
@@ -123,26 +124,8 @@ Future versions will introduce multiple AI difficulty levels.
 The game keeps track of:
 
 - ✅ Wins
-- ❌ Losses
-- 🏁 Total Matches
 - ⭐ Total Score
-- ⏱️ Best Time
 - 🎮 Total Play Time
-
----
-
-# 🏆 Scoring System
-
-Players earn points based on performance.
-
-Example:
-
-| Event | Points |
-|--------|--------|
-| Complete Maze | +10 |
-| Defeat AI | +15 |
-| Win Multiplayer Match | +20 |
-| New Best Time | +10 |
 
 ---
 
@@ -162,7 +145,6 @@ Fully optimized for:
 - [ ] 🌐 Online Multiplayer
 - [ ] 💾 Save Match History
 - [ ] 🎚️ AI Difficulty Levels
-- [ ] 🗺️ Random Maze Generator
 - [ ] 🔊 Sound Effects
 - [ ] 🎵 Background Music
 - [ ] 🎨 Multiple Themes
@@ -236,7 +218,7 @@ If you have questions, suggestions, or feedback, feel free to reach out.
 ### Project Repository
 
 ```text
-https://github.com/muxriddin-web/cyber-maze-duel-x
+https://github.com/muxriddin-web/Labirint
 ```
 
 ### Author
