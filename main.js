@@ -369,7 +369,7 @@ function hardResetGame(){
     clearInterval(gameInterval);
     clearInterval(botInterval);
 
-    location.reload(); // eng toza reset
+    location.reload(); 
 }
 
 
