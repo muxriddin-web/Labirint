@@ -5,1557 +5,456 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cyber Maze Duel X</title>
 <style>
-
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&display=swap');
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-:root{
-    --cyan:#00e5ff;
-    --purple:#8b5cf6;
-    --pink:#ff0077;
-    --green:#00ff88;
-}
-
-body{
-    font-family:'Orbitron',sans-serif;
-    overflow:hidden;
-    color:white;
-    min-height:100vh;
-
-    background:
-    radial-gradient(circle at top left,#16213e 0%,transparent 30%),
-    radial-gradient(circle at bottom right,#2e1065 0%,transparent 35%),
-    linear-gradient(135deg,#050816,#0f172a,#020617);
-}
-
-/* GRID */
-
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-
-    background-image:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-
-    background-size:40px 40px;
-
-    animation:gridMove 15s linear infinite;
-
-    z-index:-1;
-}
-
-@keyframes gridMove{
-    from{
-        transform:translateY(0);
-    }
-    to{
-        transform:translateY(40px);
-    }
-}
-
-.hidden{
-    display:none !important;
-}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--cyan:#00e5ff;--purple:#8b5cf6;--bg:#0b1020;--panel:#151b34;--line:rgba(255,255,255,.1)}
+body{font-family:'Orbitron',sans-serif;color:#fff;min-height:100vh;overflow-x:hidden;background:var(--bg)}
+.hidden{display:none!important}
 
 /* MENU */
-
-#menu{
-    position:absolute;
-    inset:0;
-
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-
-    gap:25px;
-    padding:20px;
-}
-
-#menu h1{
-    font-size:clamp(40px,7vw,90px);
-    text-align:center;
-
-    color:var(--cyan);
-
-    text-shadow:
-    0 0 10px var(--cyan),
-    0 0 40px var(--cyan),
-    0 0 100px var(--purple);
-
-    animation:titleGlow 2s infinite alternate;
-}
-
-@keyframes titleGlow{
-    from{
-        transform:scale(1);
-    }
-
-    to{
-        transform:scale(1.04);
-    }
-}
-
-.menuButtons{
-    display:flex;
-    gap:20px;
-    flex-wrap:wrap;
-    justify-content:center;
-}
-
-button{
-    border:none;
-    cursor:pointer;
-    transition:.3s;
-    font-family:'Orbitron',sans-serif;
-}
-
-.menuBtn{
-    width:min(320px,90vw);
-
-    padding:20px;
-
-    border-radius:20px;
-
-    color:white;
-
-    font-size:20px;
-    font-weight:700;
-
-    background:
-    linear-gradient(135deg,var(--cyan),var(--purple));
-
-    box-shadow:
-    0 0 20px rgba(0,229,255,.4);
-
-    position:relative;
-    overflow:hidden;
-}
-
-.menuBtn::before{
-    content:"";
-
-    position:absolute;
-    top:0;
-    left:-100%;
-
-    width:100%;
-    height:100%;
-
-    background:
-    linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,.3),
-    transparent
-    );
-
-    transition:.5s;
-}
-
-.menuBtn:hover::before{
-    left:100%;
-}
-
-.menuBtn:hover{
-    transform:translateY(-6px) scale(1.05);
-
-    box-shadow:
-    0 0 30px var(--cyan),
-    0 0 60px var(--purple);
-}
+#menu{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:25px;padding:20px}
+#menu h1{font-size:clamp(34px,7vw,80px);text-align:center;color:var(--cyan)}
+.menuButtons{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+button{border:none;cursor:pointer;font-family:inherit;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--cyan),var(--purple));transition:transform .15s}
+button:hover{transform:scale(1.04)}
+button:active{transform:scale(.97)}
+.menuBtn{width:min(320px,90vw);padding:20px;border-radius:18px;font-size:20px}
 
 /* GAME */
+#gameArea{width:100%;min-height:100vh;padding:20px}
+.topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;padding:16px;margin-bottom:20px;border-radius:18px;background:var(--panel);border:1px solid var(--line)}
+.statBox{text-align:center;flex:1;min-width:120px}
+.statTitle{font-size:13px;opacity:.7}
+.statValue{font-size:clamp(20px,2vw,28px);font-weight:700}
+.boards{display:flex;justify-content:center}
+.boardBox{display:flex;flex-direction:column;align-items:center;padding:18px;border-radius:24px;background:var(--panel);border:1px solid var(--line)}
+.legend{display:flex;align-items:center;gap:20px;margin-bottom:12px;font-size:16px;font-weight:700}
+.legend span{display:flex;align-items:center;gap:8px}
+.dot{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid #fff;vertical-align:middle}
+.dot.p1{background:#2563eb}
+.dot.p2{background:#f97316}
+canvas{display:block;width:max(280px,min(calc(100vw - 80px),800px,calc(100dvh - 240px)));aspect-ratio:1/1;border-radius:12px;border:3px solid var(--purple)}
 
-#gameArea{
-    width:100%;
-    min-height:100vh;
+/* MOBIL BOSHQARUV (tugmalar) */
+.pads{display:none;justify-content:center;gap:14px;margin-top:14px}
+.pad{--k:clamp(44px,12.5vw,60px);display:grid;grid-template-columns:repeat(3,var(--k));grid-template-rows:repeat(2,var(--k));grid-template-areas:". u ." "l d r";gap:6px}
+.pad.off{display:none}
+.pad button{width:100%;height:100%;border-radius:14px;font-size:22px;border:2px solid #fff;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.pad.p1 button{background:#2563eb}
+.pad.p2 button{background:#f97316}
+.pad button:hover{transform:none}
+.pad button:active{opacity:.7}
+@media(pointer:coarse),(max-width:700px){.pads{display:flex}}
 
-    padding:20px;
-}
-
-.topbar{
-    width:100%;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    flex-wrap:wrap;
-
-    gap:20px;
-
-    padding:20px;
-
-    border-radius:20px;
-
-    background:rgba(255,255,255,.05);
-
-    backdrop-filter:blur(12px);
-
-    border:1px solid rgba(255,255,255,.08);
-
-    margin-bottom:20px;
-
-    box-shadow:
-    0 0 30px rgba(0,229,255,.08);
-}
-
-.statBox{
-    text-align:center;
-    flex:1;
-    min-width:120px;
-}
-
-.statTitle{
-    font-size:13px;
-    opacity:.7;
-}
-
-.statValue{
-    font-size:clamp(20px,2vw,28px);
-    font-weight:700;
-}
-
-/* =========================
-BOARDS FIX
-========================= */
-
-.boards{
-    width:100%;
-
-    display:grid;
-
-    grid-template-columns:repeat(2,minmax(420px,500px));
-
-    justify-content:center;
-    align-items:start;
-
-    gap:30px;
-
-    margin-top:20px;
-}
-
-/* BOARD */
-
-.boardBox{
-    width:100%;
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-
-    background:rgba(255,255,255,.05);
-
-    backdrop-filter:blur(14px);
-
-    padding:20px;
-
-    border-radius:30px;
-
-    border:1px solid rgba(255,255,255,.08);
-
-    box-shadow:
-    0 0 40px rgba(0,229,255,.08);
-
-    transition:.3s;
-}
-
-.boardBox:hover{
-    transform:translateY(-5px);
-}
-
-.boardBox h2{
-    text-align:center;
-
-    margin-bottom:15px;
-
-    color:var(--cyan);
-
-    font-size:26px;
-}
-
-/* CANVAS */
-
-canvas{
-    width:100%;
-    height:auto;
-
-    aspect-ratio:1/1;
-
-    max-width:500px;
-    max-height:500px;
-
-    border-radius:20px;
-
-    border:3px solid rgba(0,229,255,.5);
-
-    background:#0f172a;
-
-    box-shadow:
-    0 0 30px rgba(0,229,255,.3),
-    0 0 100px rgba(139,92,246,.25);
-
-    animation:canvasGlow 2s infinite alternate;
-}
-
-/* LARGE DESKTOP */
-
-@media(max-width:1300px){
-
-    .boards{
-
-        grid-template-columns:repeat(2,minmax(320px,1fr));
-
-        gap:20px;
-    }
-
-    canvas{
-
-        max-width:430px;
-        max-height:430px;
-    }
-}
-
-/* TABLET */
+/* COUNTDOWN + END */
+#countdownScreen,#endScreen{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;z-index:999;background:rgba(0,0,0,.82)}
+#countdown{font-size:clamp(90px,20vw,180px);font-weight:800;color:var(--cyan)}
+.endBox{width:min(500px,90vw);padding:40px;border-radius:24px;text-align:center;background:var(--panel);border:1px solid var(--line);animation:pop .3s ease-out}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+#endText{font-size:clamp(34px,6vw,52px);color:var(--cyan);margin-bottom:30px}
+.btnRow{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.gameBtn{width:min(180px,80vw);padding:16px;border-radius:14px;font-size:18px}
 
 @media(max-width:1000px){
-
-    body{
-        overflow:auto;
-    }
-
-    #gameArea{
-        min-height:100vh;
-        height:auto;
-    }
-
-    .boards{
-
-        grid-template-columns:1fr;
-
-        width:100%;
-
-        justify-items:center;
-    }
-
-    .boardBox{
-        width:min(95vw,560px);
-    }
-
-    canvas{
-        width:100%;
-        max-width:100%;
-    }
-
-    .topbar{
-        justify-content:center;
-    }
+  .topbar{justify-content:center}
 }
-
-/* MOBILE */
-
 @media(max-width:700px){
-
-    #menu{
-        padding:20px;
-    }
-
-    #menu h1{
-        font-size:40px;
-        line-height:1.2;
-    }
-
-    .menuButtons{
-        width:100%;
-        flex-direction:column;
-        align-items:center;
-    }
-
-    .menuBtn{
-        width:100%;
-        font-size:18px;
-        padding:18px;
-    }
-
-    .topbar{
-
-        display:grid;
-
-        grid-template-columns:repeat(2,1fr);
-
-        gap:15px;
-
-        padding:15px;
-    }
-
-    .statBox{
-        width:100%;
-    }
-
-    .statValue{
-        font-size:20px;
-    }
-
-    .boardBox{
-        padding:14px;
-        border-radius:22px;
-    }
-
-    .boardBox h2{
-        font-size:22px;
-    }
-
-    canvas{
-        border-radius:16px;
-    }
-
-    #countdown{
-        font-size:100px;
-    }
-
-    .endBox{
-        padding:25px;
-    }
-
-    #endText{
-        font-size:34px;
-    }
-
-    .btnRow{
-        flex-direction:column;
-    }
-
-    .gameBtn{
-        width:100%;
-    }
+  .menuButtons{flex-direction:column;width:100%;align-items:center}
+  .menuBtn{width:100%;font-size:18px}
+  #gameArea{padding:10px}
+  .topbar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px;margin-bottom:10px}
+  .statBox{min-width:0}
+  .statTitle{font-size:10px}
+  .statValue{font-size:14px;word-break:break-word}
+  .boardBox{padding:8px}
+  canvas{width:calc(100vw - 36px)}
+  .endBox{padding:25px}
+  .btnRow{flex-direction:column;align-items:center}
+  .gameBtn{width:100%}
 }
-
-/* SMALL MOBILE */
-
-@media(max-width:450px){
-
-    .topbar{
-        grid-template-columns:1fr;
-    }
-
-    #menu h1{
-        font-size:32px;
-    }
-
-    #countdown{
-        font-size:80px;
-    }
-
-    .boardBox{
-        width:100%;
-    }
-}
-
-/* COUNTDOWN */
-
-#countdownScreen{
-    position:fixed;
-    inset:0;
-
-    background:rgba(0,0,0,.78);
-
-    backdrop-filter:blur(10px);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    z-index:99999;
-}
-
-#countdown{
-    font-size:180px;
-    font-weight:800;
-
-    color:var(--cyan);
-
-    text-shadow:
-    0 0 20px var(--cyan),
-    0 0 60px var(--purple),
-    0 0 120px var(--cyan);
-
-    animation:countAnim .8s infinite alternate;
-}
-
-@keyframes countAnim{
-
-    from{
-        transform:scale(.7);
-        opacity:.5;
-    }
-
-    to{
-        transform:scale(1.1);
-        opacity:1;
-    }
-}
-
-/* END SCREEN */
-
-#endScreen{
-    position:fixed;
-    inset:0;
-
-    background:rgba(0,0,0,.7);
-
-    backdrop-filter:blur(10px);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    z-index:999;
-}
-
-.endBox{
-    width:min(500px,90vw);
-
-    padding:40px;
-
-    border-radius:30px;
-
-    text-align:center;
-
-    background:
-    linear-gradient(145deg,#0f172a,#111827);
-
-    border:1px solid rgba(255,255,255,.1);
-
-    box-shadow:
-    0 0 50px rgba(0,229,255,.2);
-}
-
-#endText{
-    font-size:clamp(38px,6vw,55px);
-
-    color:var(--cyan);
-
-    margin-bottom:30px;
-
-    text-shadow:
-    0 0 20px var(--cyan);
-}
-
-.btnRow{
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    flex-wrap:wrap;
-}
-
-.gameBtn{
-    width:min(180px,80vw);
-
-    padding:16px;
-
-    border-radius:16px;
-
-    background:
-    linear-gradient(135deg,var(--purple),var(--cyan));
-
-    color:white;
-
-    font-size:18px;
-    font-weight:700;
-}
-
-.gameBtn:hover{
-    transform:scale(1.08);
-}
-
-/* PARTICLES */
-
-.particle{
-    position:absolute;
-
-    width:12px;
-    height:12px;
-
-    border-radius:50%;
-
-    pointer-events:none;
-
-    animation:particleAnim .7s linear forwards;
-}
-
-@keyframes particleAnim{
-
-    from{
-        transform:translate(0,0) scale(1);
-        opacity:1;
-    }
-
-    to{
-        transform:
-        translate(
-        calc(var(--x) * 1px),
-        calc(var(--y) * 1px)
-        )
-        scale(0);
-
-        opacity:0;
-    }
-}
-
-/* RESPONSIVE */
-
-@media(max-width:1000px){
-
-    body{
-        overflow:auto;
-    }
-
-    .boards{
-        flex-direction:column;
-    }
-
-    #countdown{
-        font-size:120px;
-    }
-}
-
-@media(max-width:700px){
-
-    #menu h1{
-        font-size:42px;
-    }
-
-    .menuButtons{
-        flex-direction:column;
-        width:100%;
-        align-items:center;
-    }
-
-    .menuBtn{
-        width:100%;
-    }
-
-    .topbar{
-        justify-content:center;
-    }
-
-    .statBox{
-        width:45%;
-    }
-
-    .btnRow{
-        flex-direction:column;
-        align-items:center;
-    }
-
-    .gameBtn{
-        width:100%;
-    }
-}
-
+@media(prefers-reduced-motion:reduce){.endBox{animation:none}}
 </style>
 </head>
-
 <body>
 
-<!-- MENU -->
-
 <div id="menu">
-
     <h1>CYBER MAZE DUEL X</h1>
-
     <div class="menuButtons">
-
-        <button class="menuBtn" id="botBtn">
-            🤖 BOT MODE
-        </button>
-
-        <button class="menuBtn" id="friendBtn">
-            👥 FRIEND MODE
-        </button>
-
+        <button class="menuBtn" id="botBtn">🤖 BOT MODE</button>
+        <button class="menuBtn" id="friendBtn">👥 FRIEND MODE</button>
     </div>
-
 </div>
-
-<!-- GAME -->
 
 <div id="gameArea" class="hidden">
-
     <div class="topbar">
-
-        <div class="statBox">
-            <div class="statTitle">TIME</div>
-            <div class="statValue">
-                ⏳ <span id="timer">60</span>
-            </div>
-        </div>
-
-        <div class="statBox">
-            <div class="statTitle">PLAYER 1</div>
-            <div class="statValue">
-                🔵 <span id="p1Score">0</span>
-            </div>
-        </div>
-
-        <div class="statBox">
-            <div class="statTitle">PLAYER 2</div>
-            <div class="statValue">
-                🔴 <span id="p2Score">0</span>
-            </div>
-        </div>
-
-        <div class="statBox">
-            <div class="statTitle">WINNER</div>
-            <div class="statValue">
-                🏆 <span id="winner">NONE</span>
-            </div>
-        </div>
-
+        <div class="statBox"><div class="statTitle">TIME</div><div class="statValue">⏳ <span id="timer">60</span></div></div>
+        <div class="statBox"><div class="statTitle">PLAYER 1</div><div class="statValue"><i class="dot p1"></i> <span id="p1Score">0</span></div></div>
+        <div class="statBox"><div class="statTitle" id="p2Label">BOT</div><div class="statValue"><i class="dot p2"></i> <span id="p2Score">0</span></div></div>
+        <div class="statBox"><div class="statTitle">WINNER</div><div class="statValue">🏆 <span id="winner">NONE</span></div></div>
     </div>
-
     <div class="boards">
-
         <div class="boardBox">
-
-            <h2>PLAYER 1</h2>
-
-            <canvas id="maze1" width="500" height="500"></canvas>
-
+            <div class="legend">
+                <span><i class="dot p1"></i>PLAYER 1</span><span>VS</span>
+                <span><i class="dot p2"></i><b id="p2Name">BOT</b></span>
+            </div>
+            <canvas id="maze"></canvas>
         </div>
-
-        <div class="boardBox">
-
-            <h2 id="enemyTitle">BOT</h2>
-
-            <canvas id="maze2" width="500" height="500"></canvas>
-
-        </div>
-
     </div>
 
+    <div class="pads">
+        <div class="pad p1" data-player="1">
+            <button data-dir="0,-1" style="grid-area:u">▲</button>
+            <button data-dir="-1,0" style="grid-area:l">◀</button>
+            <button data-dir="0,1" style="grid-area:d">▼</button>
+            <button data-dir="1,0" style="grid-area:r">▶</button>
+        </div>
+        <div class="pad p2 off" data-player="2">
+            <button data-dir="0,-1" style="grid-area:u">▲</button>
+            <button data-dir="-1,0" style="grid-area:l">◀</button>
+            <button data-dir="0,1" style="grid-area:d">▼</button>
+            <button data-dir="1,0" style="grid-area:r">▶</button>
+        </div>
+    </div>
 </div>
 
-<!-- COUNTDOWN -->
-
-<div id="countdownScreen" class="hidden">
-    <div id="countdown">3</div>
-</div>
-
-<!-- END -->
+<div id="countdownScreen" class="hidden"><div id="countdown">3</div></div>
 
 <div id="endScreen" class="hidden">
-
     <div class="endBox">
-
         <h1 id="endText">WINNER</h1>
-
         <div class="btnRow">
-
-            <button class="gameBtn" id="restartBtn">
-                🔄 Restart
-            </button>
-
-            <button class="gameBtn" id="homeBtn">
-                🏠 Home
-            </button>
-
+            <button class="gameBtn" id="restartBtn">🔄 Restart</button>
+            <button class="gameBtn" id="homeBtn">🏠 Home</button>
         </div>
-
     </div>
-
 </div>
 
 <script>
+const $ = id => document.getElementById(id);
 
-const canvas1 = document.getElementById("maze1");
-const canvas2 = document.getElementById("maze2");
+// ===== SOZLAMALAR =====
+const ROOM = 48, WALL = 14;            // keng yo'lak, ingichka devor
+let ROWS = 25, COLS = 25, W = 0, px = []; // toq o'lcham: har bir katak o'z kengligiga ega
+const TIME = 90, BOT_DELAY = 250, SHIFT_DELAY = 8000;
+const COLOR = { wall: "#3b2a8c", path: "#eef2ff", exit: "#16a34a", start: "#bbf7d0", ink: "#0f172a" };
+const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
-const ctx1 = canvas1.getContext("2d");
-const ctx2 = canvas2.getContext("2d");
+const ctx = $("maze").getContext("2d");
+const DPR = Math.min(window.devicePixelRatio || 1, 2); // retina ekranda ham tiniq
+const cw = i => (i % 2 ? ROOM : WALL); // toq indeks = yo'lak, juft = devor
 
-const SIZE = 25;
-const ROWS = 20;
-const COLS = 20;
+// telefonda labirint kichikroq (17x17), kompyuterda 25x25: koptok har doim katta
+function setupBoard() {
+    ROWS = COLS = window.matchMedia("(max-width: 700px)").matches ? 17 : 25;
+    px = [];
+    let acc = 0;
+    for (let i = 0; i < COLS; i++) { px.push(acc); acc += cw(i); }
+    W = acc;
+    ctx.canvas.width = ctx.canvas.height = W * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
 
-let maze1 = [];
-let maze2 = [];
+let maze = [], exit = { x: 1, y: 1 };
+let gameMode = "bot", gameStarted = false, timer = TIME;
+let gameInterval, botInterval, shiftInterval;
+const scores = [0, 0];
+const p1 = { x: 1, y: 1, color: "#2563eb", label: "1" }; // ko'k
+const p2 = { x: 1, y: 1, color: "#f97316", label: "B" }; // to'q sariq (rang ko'rligiga ham ajraladi)
 
-let exit1 = {};
-let exit2 = {};
+// ===== YORDAMCHI =====
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
 
-let gameMode = "bot";
+function clearTimers() {
+    clearInterval(gameInterval);
+    clearInterval(botInterval);
+    clearInterval(shiftInterval);
+}
 
-let timer = 60;
+const open = (x, y) => maze[y] && maze[y][x] === 0;
 
-let gameInterval;
-let botInterval;
-
-let gameStarted = false;
-
-let player1Score = 0;
-let player2Score = 0;
-let mazeShiftInterval;
-const p1 = {
-    x:1,
-    y:1,
-    color:"#00e5ff"
-};
-
-const p2 = {
-    x:1,
-    y:1,
-    color:"#ff0077"
-};
-
-/* BUTTONS */
-
-document.getElementById("botBtn").onclick = () => {
-
-    gameMode = "bot";
-
-    document.getElementById("enemyTitle").innerText = "BOT";
-
-    startGame();
-};
-
-document.getElementById("friendBtn").onclick = () => {
-
-    gameMode = "friend";
-
-    document.getElementById("enemyTitle").innerText = "PLAYER 2";
-
-    startGame();
-};
-
-/* MAZE */
-
-function generateMaze(){
-
-    let maze = Array.from(
-        {length:ROWS},
-        () => Array(COLS).fill(1)
-    );
-
-    function carve(x,y){
-
-        maze[y][x] = 0;
-
-        let dirs = [
-            [0,-2],
-            [0,2],
-            [-2,0],
-            [2,0]
-        ];
-
-        dirs.sort(() => Math.random() - .5);
-
-        for(let [dx,dy] of dirs){
-
-            let nx = x + dx;
-            let ny = y + dy;
-
-            if(
-                nx > 0 &&
-                ny > 0 &&
-                nx < COLS - 1 &&
-                ny < ROWS - 1 &&
-                maze[ny][nx] === 1
-            ){
-
-                maze[y + dy/2][x + dx/2] = 0;
-
-                carve(nx,ny);
+// start nuqtasidan har bir katakkacha masofa (BFS), yetib bo'lmasa -1
+function distFrom(start) {
+    const d = Array.from({ length: ROWS }, () => Array(COLS).fill(-1));
+    const q = [start];
+    d[start.y][start.x] = 0;
+    for (let i = 0; i < q.length; i++) {
+        const c = q[i];
+        for (const [dx, dy] of DIRS) {
+            const nx = c.x + dx, ny = c.y + dy;
+            if (open(nx, ny) && d[ny][nx] < 0) {
+                d[ny][nx] = d[c.y][c.x] + 1;
+                q.push({ x: nx, y: ny });
             }
         }
     }
-
-    carve(1,1);
-
-    return maze;
+    return d;
 }
 
-function randomExit(maze){
+// ===== LABIRINT =====
+function generateMaze() {
+    const m = Array.from({ length: ROWS }, () => Array(COLS).fill(1));
+    const stack = [[1, 1]];
+    m[1][1] = 0;
+    while (stack.length) {
+        const [x, y] = stack[stack.length - 1];
+        const next = shuffle([[0, -2], [0, 2], [-2, 0], [2, 0]])
+            .map(([dx, dy]) => [x + dx, y + dy, dx, dy])
+            .find(([nx, ny]) => nx > 0 && ny > 0 && nx < COLS - 1 && ny < ROWS - 1 && m[ny][nx] === 1);
+        if (!next) { stack.pop(); continue; }
+        const [nx, ny, dx, dy] = next;
+        m[y + dy / 2][x + dx / 2] = 0;
+        m[ny][nx] = 0;
+        stack.push([nx, ny]);
+    }
+    return m;
+}
 
-    while(true){
+// chiqish: startdan eng uzoq 20% katakdan tasodifiy biri (yaqin chiqmaydi)
+function pickExit() {
+    const d = distFrom({ x: 1, y: 1 });
+    const cells = [];
+    for (let y = 0; y < ROWS; y++)
+        for (let x = 0; x < COLS; x++)
+            if (d[y][x] > 0 && x % 2 && y % 2) cells.push({ x, y, v: d[y][x] }); // faqat keng yo'lak katagi
+    cells.sort((a, b) => b.v - a.v);
+    const pool = cells.slice(0, Math.max(1, Math.floor(cells.length * 0.2)));
+    const e = pool[Math.floor(Math.random() * pool.length)];
+    return { x: e.x, y: e.y };
+}
 
-        let x = Math.floor(Math.random() * COLS);
-        let y = Math.floor(Math.random() * ROWS);
-
-        if(
-            maze[y][x] === 0 &&
-            !(x === 1 && y === 1)
-        ){
-            return {x,y};
+// har 8 soniyada 3 ta devor ochiladi, 3 ta yo'lak yopiladi. Faqat o'tish joylari
+// o'zgaradi, shuning uchun labirint shakli buzilmaydi va yo'l doim bor qoladi
+function shiftMaze() {
+    const gaps = [];
+    for (let y = 1; y < ROWS - 1; y++)
+        for (let x = 1; x < COLS - 1; x++) {
+            const busy = (x === p1.x && y === p1.y) || (x === p2.x && y === p2.y) || (x === exit.x && y === exit.y);
+            if ((x + y) % 2 === 1 && !busy) gaps.push([x, y]);
+        }
+    shuffle(gaps);
+    let opened = 0, closed = 0;
+    for (const [x, y] of gaps) {
+        if (opened >= 3 && closed >= 3) break;
+        if (maze[y][x] === 1) {
+            if (opened < 3) { maze[y][x] = 0; opened++; }
+        } else if (closed < 3) {
+            maze[y][x] = 1;
+            const d = distFrom(exit);
+            if (d[p1.y][p1.x] >= 0 && d[p2.y][p2.x] >= 0) closed++;
+            else maze[y][x] = 0;
         }
     }
-}
-
-/* =========================
-SMART DYNAMIC MAZE
-========================= */
-
-function hasPath(maze,start,end){
-
-    let queue = [];
-
-    let visited = Array.from(
-        {length:ROWS},
-        () => Array(COLS).fill(false)
-    );
-
-    queue.push(start);
-
-    visited[start.y][start.x] = true;
-
-    while(queue.length){
-
-        let current = queue.shift();
-
-        if(
-            current.x === end.x &&
-            current.y === end.y
-        ){
-            return true;
-        }
-
-        for(let [dx,dy] of [
-            [1,0],
-            [-1,0],
-            [0,1],
-            [0,-1]
-        ]){
-
-            let nx = current.x + dx;
-            let ny = current.y + dy;
-
-            if(
-                nx >= 0 &&
-                ny >= 0 &&
-                nx < COLS &&
-                ny < ROWS &&
-                !visited[ny][nx] &&
-                maze[ny][nx] === 0
-            ){
-
-                visited[ny][nx] = true;
-
-                queue.push({
-                    x:nx,
-                    y:ny
-                });
-            }
-        }
-    }
-
-    return false;
-}
-
-/* SHIFT */
-
-function shiftMaze(maze,player,exit){
-
-    /* COPY */
-
-    let newMaze =
-    maze.map(row => [...row]);
-
-    for(let y = 1; y < ROWS - 1; y++){
-
-        for(let x = 1; x < COLS - 1; x++){
-
-            /* PLAYER VA EXIT */
-
-            if(
-                (x === player.x && y === player.y) ||
-                (x === exit.x && y === exit.y)
-            ){
-                continue;
-            }
-
-            /* RANDOM CHANGE */
-
-            if(Math.random() < 0.06){
-
-                newMaze[y][x] =
-                newMaze[y][x] === 1
-                ? 0
-                : 1;
-            }
-        }
-    }
-
-    /* PLAYER BLOKLANMASIN */
-
-    newMaze[player.y][player.x] = 0;
-
-    if(newMaze[player.y - 1])
-    newMaze[player.y - 1][player.x] = 0;
-
-    if(newMaze[player.y + 1])
-    newMaze[player.y + 1][player.x] = 0;
-
-    if(newMaze[player.y][player.x - 1] !== undefined)
-    newMaze[player.y][player.x - 1] = 0;
-
-    if(newMaze[player.y][player.x + 1] !== undefined)
-    newMaze[player.y][player.x + 1] = 0;
-
-    /* EXIT OCHIQ */
-
-    newMaze[exit.y][exit.x] = 0;
-
-    /* YO'L TEKSHIRISH */
-
-    if(
-        hasPath(
-            newMaze,
-            {x:player.x,y:player.y},
-            exit
-        )
-    ){
-
-        /* AGAR YO'L BOR BO'LSA */
-
-        for(let y=0;y<ROWS;y++){
-
-            for(let x=0;x<COLS;x++){
-
-                maze[y][x] = newMaze[y][x];
-            }
-        }
-    }
-}
-/* DRAW */
-
-function drawMaze(ctx,maze){
-
-    ctx.clearRect(0,0,500,500);
-
-    for(let y=0;y<ROWS;y++){
-
-        for(let x=0;x<COLS;x++){
-
-            ctx.fillStyle =
-            maze[y][x] === 1
-            ? "#5b21b6"
-            : "#0f172a";
-
-            ctx.fillRect(
-                x * SIZE,
-                y * SIZE,
-                SIZE,
-                SIZE
-            );
-        }
-    }
-}
-
-function drawExit(ctx,exit){
-
-    ctx.fillStyle = "#00ff88";
-
-    ctx.shadowBlur = 25;
-    ctx.shadowColor = "#00ff88";
-
-    ctx.fillRect(
-        exit.x * SIZE,
-        exit.y * SIZE,
-        SIZE,
-        SIZE
-    );
-
-    ctx.shadowBlur = 0;
-}
-
-function drawPlayer(ctx,p){
-
-    ctx.beginPath();
-
-    ctx.fillStyle = p.color;
-
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = p.color;
-
-    ctx.arc(
-        p.x * SIZE + SIZE/2,
-        p.y * SIZE + SIZE/2,
-        SIZE/3,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    ctx.shadowBlur = 0;
-}
-
-function render(){
-
-    drawMaze(ctx1,maze1);
-    drawMaze(ctx2,maze2);
-
-    drawExit(ctx1,exit1);
-    drawExit(ctx2,exit2);
-
-    drawPlayer(ctx1,p1);
-    drawPlayer(ctx2,p2);
-}
-
-/* START */
-
-function startGame(){
-
-    document
-    .getElementById("menu")
-    .classList.add("hidden");
-
-    document
-    .getElementById("gameArea")
-    .classList.remove("hidden");
-
-    document
-    .getElementById("endScreen")
-    .classList.add("hidden");
-
-    maze1 = generateMaze();
-    maze2 = generateMaze();
-
-    exit1 = randomExit(maze1);
-    exit2 = randomExit(maze2);
-
-    p1.x = 1;
-    p1.y = 1;
-
-    p2.x = 1;
-    p2.y = 1;
-
-    timer = 60;
-
     render();
+}
 
+// ===== CHIZISH (soyasiz, tiniq) =====
+function checker(x, y) {
+    const n = 4, c = ROOM / n;
+    for (let i = 0; i < n; i++)
+        for (let j = 0; j < n; j++) {
+            ctx.fillStyle = (i + j) % 2 ? "#fff" : COLOR.ink;
+            ctx.fillRect(px[x] + i * c, px[y] + j * c, c, c);
+        }
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = COLOR.exit;
+    ctx.strokeRect(px[x] + 1.5, px[y] + 1.5, ROOM - 3, ROOM - 3);
+}
+
+// koptok: qora kontur + rangli tanasi + oq halqa + ichida harf (1 / B / 2)
+function ball(p, cx, cy, r) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r + 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = COLOR.ink;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = "#fff";
+    ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold " + Math.round(r * 1.1) + "px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(p.label, cx, cy + 1);
+}
+
+function render() {
+    ctx.fillStyle = COLOR.wall;
+    ctx.fillRect(0, 0, W, W);
+
+    ctx.fillStyle = COLOR.path;
+    for (let y = 0; y < ROWS; y++)
+        for (let x = 0; x < COLS; x++)
+            if (maze[y][x] === 0) ctx.fillRect(px[x], px[y], cw(x), cw(y));
+
+    ctx.fillStyle = COLOR.start; // start chizig'i
+    ctx.fillRect(px[1], px[1], ROOM, ROOM);
+    checker(exit.x, exit.y);     // finish
+
+    // bir katakda turishsa yonma-yon chiziladi
+    const same = p1.x === p2.x && p1.y === p2.y;
+    const r = ROOM * (same ? 0.3 : 0.34), off = same ? ROOM * 0.24 : 0;
+    ball(p2, px[p2.x] + cw(p2.x) / 2 + off, px[p2.y] + cw(p2.y) / 2, r);
+    ball(p1, px[p1.x] + cw(p1.x) / 2 - off, px[p1.y] + cw(p1.y) / 2, r);
+}
+
+// ===== O'YIN OQIMI =====
+function setMode(mode) {
+    gameMode = mode;
+    const name = mode === "bot" ? "BOT" : "PLAYER 2";
+    $("p2Name").innerText = name;
+    $("p2Label").innerText = name;
+    p2.label = mode === "bot" ? "B" : "2";
+    document.querySelector(".pad.p2").classList.toggle("off", mode !== "friend");
+    startGame();
+}
+
+$("botBtn").onclick = () => setMode("bot");
+$("friendBtn").onclick = () => setMode("friend");
+
+function startGame() {
+    clearTimers();
+    $("menu").classList.add("hidden");
+    $("endScreen").classList.add("hidden");
+    $("gameArea").classList.remove("hidden");
+
+    setupBoard();
+    maze = generateMaze();
+    exit = pickExit();
+    p1.x = p1.y = p2.x = p2.y = 1;
+    timer = TIME;
+    $("timer").innerText = timer;
+    $("winner").innerText = "NONE";
+    render();
     startCountdown();
 }
 
-/* COUNTDOWN */
-
-function startCountdown(){
-
-    clearInterval(gameInterval);
-    clearInterval(botInterval);
-
+function startCountdown() {
     gameStarted = false;
-
     let count = 3;
-
-    const screen =
-    document.getElementById("countdownScreen");
-
-    const text =
-    document.getElementById("countdown");
-
+    const screen = $("countdownScreen"), text = $("countdown");
     screen.classList.remove("hidden");
-
     text.innerText = count;
 
-    let interval = setInterval(() => {
-
+    const iv = setInterval(() => {
         count--;
-
-        if(count > 0){
-
-            text.innerText = count;
-        }
-
-        else if(count === 0){
-
-            text.innerText = "GO!";
-        }
-
-        else{
-
-            clearInterval(interval);
-
+        if (count > 0) text.innerText = count;
+        else if (count === 0) text.innerText = "GO!";
+        else {
+            clearInterval(iv);
             screen.classList.add("hidden");
-
-            beginRealGame();
+            beginGame();
         }
-
-    },1000);
+    }, 1000);
 }
 
-function beginRealGame(){
-
+function beginGame() {
     gameStarted = true;
-
-    document
-    .getElementById("timer")
-    .innerText = timer;
-
-    gameInterval =
-    setInterval(updateTimer,1000);
-
-    if(gameMode === "bot"){
-
-        botInterval =
-        setInterval(botMove,200);
-    }
-    /* DYNAMIC MAZE */
-
-mazeShiftInterval = setInterval(() => {
-
-    shiftMaze(maze1,p1,exit1);
-
-    shiftMaze(maze2,p2,exit2);
-
-    mazeFlash();
-
-    render();
-
-},8000);
+    gameInterval = setInterval(updateTimer, 1000);
+    shiftInterval = setInterval(shiftMaze, SHIFT_DELAY);
+    if (gameMode === "bot") botInterval = setInterval(botMove, BOT_DELAY);
 }
 
-/* MOVE */
-
-function movePlayer(player,maze,dx,dy){
-
-    if(!gameStarted) return;
-
-    let nx = player.x + dx;
-    let ny = player.y + dy;
-
-    if(
-        maze[ny] &&
-        maze[ny][nx] === 0
-    ){
-
-        player.x = nx;
-        player.y = ny;
-
-        createParticles(player);
-
-        render();
-
-        checkWinner();
-    }
-}
-
-/* TIMER */
-
-function updateTimer(){
-
+function updateTimer() {
     timer--;
-
-    document
-    .getElementById("timer")
-    .innerText = timer;
-
-    if(timer <= 0){
-
-        endGame("NO ONE");
-    }
+    $("timer").innerText = timer;
+    if (timer <= 0) endGame("NO ONE");
 }
 
-/* WIN */
-
-function checkWinner(){
-
-    if(
-        p1.x === exit1.x &&
-        p1.y === exit1.y
-    ){
-
-        player1Score++;
-
-        document
-        .getElementById("p1Score")
-        .innerText = player1Score;
-
-        endGame("PLAYER 1");
-    }
-
-    if(
-        p2.x === exit2.x &&
-        p2.y === exit2.y
-    ){
-
-        player2Score++;
-
-        document
-        .getElementById("p2Score")
-        .innerText = player2Score;
-
-        endGame(
-            gameMode === "bot"
-            ? "BOT"
-            : "PLAYER 2"
-        );
-    }
+function movePlayer(p, dx, dy) {
+    if (!gameStarted || !open(p.x + dx, p.y + dy)) return;
+    p.x += dx;
+    p.y += dy;
+    render();
+    checkWinner();
 }
 
-function endGame(winner){
-    
-    gameStarted = false;
-    clearInterval(mazeShiftInterval);
-    clearInterval(gameInterval);
-    clearInterval(botInterval);
-
-    document
-    .getElementById("winner")
-    .innerText = winner;
-
-    document
-    .getElementById("endText")
-    .innerText = winner + " WINS";
-
-    document
-    .getElementById("endScreen")
-    .classList.remove("hidden");
-}
-
-/* BOT */
-
-function heuristic(a,b){
-
-    return Math.abs(a.x - b.x)
-    + Math.abs(a.y - b.y);
-}
-
-function findPath(maze,start,end){
-
-    let open = [];
-    let closed = [];
-
-    open.push({
-        x:start.x,
-        y:start.y,
-        g:0,
-        f:0,
-        parent:null
+function checkWinner() {
+    const names = ["PLAYER 1", gameMode === "bot" ? "BOT" : "PLAYER 2"];
+    [p1, p2].forEach((p, i) => {
+        if (gameStarted && p.x === exit.x && p.y === exit.y) {
+            scores[i]++;
+            $("p" + (i + 1) + "Score").innerText = scores[i];
+            endGame(names[i]);
+        }
     });
-
-    while(open.length){
-
-        open.sort((a,b)=>a.f-b.f);
-
-        let current = open.shift();
-
-        if(
-            current.x === end.x &&
-            current.y === end.y
-        ){
-
-            let path = [];
-
-            while(current){
-
-                path.push(current);
-
-                current = current.parent;
-            }
-
-            return path.reverse();
-        }
-
-        closed.push(current);
-
-        for(let [dx,dy] of [
-            [1,0],
-            [-1,0],
-            [0,1],
-            [0,-1]
-        ]){
-
-            let nx = current.x + dx;
-            let ny = current.y + dy;
-
-            if(
-                !maze[ny] ||
-                maze[ny][nx] === 1
-            ) continue;
-
-            if(
-                closed.find(
-                    n => n.x === nx && n.y === ny
-                )
-            ) continue;
-
-            let g = current.g + 1;
-
-            let h = heuristic(
-                {x:nx,y:ny},
-                end
-            );
-
-            open.push({
-                x:nx,
-                y:ny,
-                g,
-                f:g+h,
-                parent:current
-            });
-        }
-    }
-
-    return [];
 }
 
-function botMove(){
+function endGame(winner) {
+    gameStarted = false;
+    clearTimers();
+    $("winner").innerText = winner;
+    $("endText").innerText = winner === "NO ONE" ? "TIME'S UP" : winner + " WINS";
+    $("endScreen").classList.remove("hidden");
+}
 
-    let path = findPath(
-        maze2,
-        p2,
-        exit2
-    );
-
-    if(path.length > 1){
-
-        let next = path[1];
-
-        p2.x = next.x;
-        p2.y = next.y;
-
-        createParticles(p2);
-
+// bot: chiqishdan masofa xaritasi bo'yicha har safar eng yaqin qo'shni katakka yuradi
+function botMove() {
+    if (!gameStarted) return;
+    const d = distFrom(exit);
+    let best = null;
+    for (const [dx, dy] of DIRS) {
+        const nx = p2.x + dx, ny = p2.y + dy;
+        if (open(nx, ny) && d[ny][nx] >= 0 && (!best || d[ny][nx] < best.v)) best = { x: nx, y: ny, v: d[ny][nx] };
+    }
+    if (best) {
+        p2.x = best.x;
+        p2.y = best.y;
         render();
-
         checkWinner();
     }
 }
 
-/* PARTICLES */
+// ===== BOSHQARUV =====
+const KEYS = {
+    ArrowUp: [p1, 0, -1], ArrowDown: [p1, 0, 1], ArrowLeft: [p1, -1, 0], ArrowRight: [p1, 1, 0],
+    w: [p2, 0, -1], s: [p2, 0, 1], a: [p2, -1, 0], d: [p2, 1, 0]
+};
 
-function createParticles(player){
-
-    for(let i=0;i<12;i++){
-
-        let p = document.createElement("div");
-
-        p.className = "particle";
-
-        p.style.left =
-        player.x * SIZE + 10 + "px";
-
-        p.style.top =
-        player.y * SIZE + 10 + "px";
-
-        p.style.background = player.color;
-
-        p.style.setProperty(
-            "--x",
-            Math.random() * 100 - 50
-        );
-
-        p.style.setProperty(
-            "--y",
-            Math.random() * 100 - 50
-        );
-
-        document.body.appendChild(p);
-
-        setTimeout(() => {
-            p.remove();
-        },700);
-    }
-}
-
-/* =========================
-MAZE TRANSFORM EFFECT
-========================= */
-
-function mazeFlash(){
-
-    document.querySelectorAll("canvas")
-    .forEach(canvas => {
-
-        canvas.style.transition = ".25s";
-
-        canvas.style.filter =
-        "brightness(1.8) saturate(1.8)";
-
-        canvas.style.transform =
-        "scale(1.02)";
-
-        setTimeout(() => {
-
-            canvas.style.filter = "none";
-
-            canvas.style.transform =
-            "scale(1)";
-
-        },250);
-
-    });
-}
-/* KEYS */
-
-document.addEventListener("keydown",e => {
-
-    if(e.key === "ArrowUp")
-    movePlayer(p1,maze1,0,-1);
-
-    if(e.key === "ArrowDown")
-    movePlayer(p1,maze1,0,1);
-
-    if(e.key === "ArrowLeft")
-    movePlayer(p1,maze1,-1,0);
-
-    if(e.key === "ArrowRight")
-    movePlayer(p1,maze1,1,0);
-
-    if(gameMode === "friend"){
-
-        if(e.key === "w")
-        movePlayer(p2,maze2,0,-1);
-
-        if(e.key === "s")
-        movePlayer(p2,maze2,0,1);
-
-        if(e.key === "a")
-        movePlayer(p2,maze2,-1,0);
-
-        if(e.key === "d")
-        movePlayer(p2,maze2,1,0);
-    }
+document.addEventListener("keydown", e => {
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const move = KEYS[key];
+    if (!move) return;
+    if (key.startsWith("Arrow")) e.preventDefault(); // sahifa aylanib ketmasin
+    if (move[0] === p2 && gameMode !== "friend") return;
+    movePlayer(move[0], move[1], move[2]);
 });
 
-/* RESTART */
+// ekrandagi tugmalar: bosib turilsa takroran yuradi
+document.querySelectorAll(".pad button").forEach(btn => {
+    const pad = btn.closest(".pad");
+    const p = pad.dataset.player === "1" ? p1 : p2;
+    const [dx, dy] = btn.dataset.dir.split(",").map(Number);
+    let hold = null;
+    const stop = () => { clearInterval(hold); hold = null; };
+    btn.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        stop();
+        movePlayer(p, dx, dy);
+        hold = setInterval(() => movePlayer(p, dx, dy), 120);
+    });
+    ["pointerup", "pointerleave", "pointercancel"].forEach(ev => btn.addEventListener(ev, stop));
+    btn.addEventListener("contextmenu", e => e.preventDefault());
+});
 
-document.getElementById("restartBtn")
-.onclick = () => {
-    clearInterval(mazeShiftInterval);
-    startGame();
-};
+$("restartBtn").onclick = startGame;
 
-document.getElementById("homeBtn")
-.onclick = () => {
-    clearInterval(mazeShiftInterval);
-    clearInterval(gameInterval);
-    clearInterval(botInterval);
-
+$("homeBtn").onclick = () => {
     gameStarted = false;
-
-    document
-    .getElementById("gameArea")
-    .classList.add("hidden");
-
-    document
-    .getElementById("menu")
-    .classList.remove("hidden");
-
-    document
-    .getElementById("endScreen")
-    .classList.add("hidden");
+    clearTimers();
+    $("endScreen").classList.add("hidden");
+    $("gameArea").classList.add("hidden");
+    $("menu").classList.remove("hidden");
 };
-
 </script>
 </body>
 </html>
