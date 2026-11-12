@@ -44,7 +44,16 @@ canvas{display:block;width:max(280px,min(calc(100vw - 80px),800px,calc(100dvh - 
 .pad.p2 button{background:#f97316}
 .pad button:hover{transform:none}
 .pad button:active{opacity:.7}
-@media(pointer:coarse),(max-width:700px){.pads{display:flex}}
+@media(pointer:coarse),(max-width:700px){
+  /* o'yin maydoni butun ekran: doska o'rtada, tugmalar ekran pastida (bosh barmoq yetadigan joy) */
+  #gameArea{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+  .boards{flex:1;align-items:center}
+  .pads{display:flex;justify-content:space-around;margin-top:auto;padding:16px 4px calc(22px + env(safe-area-inset-bottom,0px))}
+  .pad{--k:clamp(54px,17vw,78px);gap:8px}
+  .pad button{font-size:26px;border-radius:18px}
+  .pads.two .pad{--k:clamp(40px,12.5vw,52px);gap:6px}
+  .pads.two .pad button{font-size:20px;border-radius:14px}
+}
 
 /* COUNTDOWN + END */
 #countdownScreen,#endScreen{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;z-index:999;background:rgba(0,0,0,.82)}
@@ -315,6 +324,7 @@ function setMode(mode) {
     $("p2Label").innerText = name;
     p2.label = mode === "bot" ? "B" : "2";
     document.querySelector(".pad.p2").classList.toggle("off", mode !== "friend");
+    document.querySelector(".pads").classList.toggle("two", mode === "friend");
     startGame();
 }
 
